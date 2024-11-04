@@ -1,50 +1,48 @@
 ﻿@page
-@model IndexModel
+@using Azure.Data.Tables;
+@using Azure;
+@using Model;
+
+
+
 @{
-    ViewData["Title"] = "Home page";
-}
+var tablename = "IBASKantineMenu";
+var connectionString = "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=ibasbikeproduction3332;AccountKey=XYBeGNMoIwdKUkc844pZQupacwgVPA1Xn+5NOwUzmMaSi0agwzSFFyp1eEb9C36X4Tq8T9XaBQ1l+AStlGTg0Q==;BlobEndpoint=https://ibasbikeproduction3332.blob.core.windows.net/;FileEndpoint=https://ibasbikeproduction3332.file.core.windows.net/;QueueEndpoint=https://ibasbikeproduction3332.queue.core.windows.net/;TableEndpoint=https://ibasbikeproduction3332.table.core.windows.net/";
 
-<div class="text-center">
-    <h1 class="display-4">Kantinens Menu for uge 45</h1>
-</div>
+TableClient tableClient = new TableClient(connectionString, tablename);
 
-<table>
-    <tr>
-        <th>Dag</th>
-        <th>Varm Ret</th>
-        <th>Kold Ret</th>
-    </tr>
-	<tr>
-		<td>Man</td>
-		<td>Kylling og Pasta</td>
-		<td>Smørebrød</td>
-	</tr>
-	<tr>
-		<td>Tir</td>
-		<td>Græskarsuppe</td>
-		<td>Pastasalat</td>
-	</tr>
-	<tr>
-		<td>Ons</td>
-		<td>Lasagne</td>
-		<td>Smørebrød</td>
-	</tr>
-	<tr>
-		<td>Tor</td>
-		<td>Forloren Hare</td>
-		<td>Pastasalat</td>
-	</tr>
-	<tr>
-		<td>Fre</td>
-		<td>Wok</td>
-		<td>Smørebrød</td>
-	</tr>
-@*     @foreach (var item in Model.Menu)
+
+
+
+Pageable<TableEntity>
+	items = tableClient.Query<TableEntity>
+		();
+
+		var _productionRepo = new List<Menu>
+			();
+			foreach (TableEntity item in items)
+			{
+			var dto = new Menu
+			{
+			Ugedag = item.RowKey,
+			Uge = item.PartitionKey,
+			Varm_Ret = item.GetString("Varm_Ret"),
+			Kold_Ret = item.GetString("Kold_Ret")
+			};
+			_productionRepo.Add(dto);
+			}
+
+			foreach (Menu item in _productionRepo)
+			{
+			Console.WriteLine($"{item.Uge} {item.Ugedag} {item.Varm_Ret} {item.Kold_Ret}");
+			}
+
+		foreach(var item in _productionRepo)
 	{
-		<tr>
-			<td>@item.Dag</td>
-			<td>@item.VarmRet</td>
-			<td>@item.KoldRet</td>
-		</tr>
-	} *@
-</table>
+		<h1 class="display-4">Menu</h1>
+		<h2>Uge: @item.Uge</h2>
+		<h2>Ugedag: @item.Ugedag</h2>
+		<h2>Varm Ret: @item.Varm_Ret</h2>
+		<h2>Kold Ret: @item.Kold_Ret</h2>
+	}
+}
