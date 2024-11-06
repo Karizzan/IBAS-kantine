@@ -38,11 +38,13 @@ Pageable<TableEntity>
 			}
 
 	<h1 class="display-4">Menu</h1>
+	<h1 class="display-5">Uge 45</h1>
 		foreach(var item in _productionRepo)
 	{
-		<h2>Uge: @item.Uge</h2>
+		<div>
 		<h2>Ugedag: @item.Ugedag</h2>
 		<h2>Varm Ret: @item.Varm_Ret</h2>
 		<h2>Kold Ret: @item.Kold_Ret</h2>
+		</div>
 	}
 }
