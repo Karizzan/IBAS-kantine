@@ -4,47 +4,40 @@
 @using Model;
 
 
-
 @{
-var tablename = "IBASKantineMenu";
-var connectionString = "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=ibasbikeproduction3332;AccountKey=XYBeGNMoIwdKUkc844pZQupacwgVPA1Xn+5NOwUzmMaSi0agwzSFFyp1eEb9C36X4Tq8T9XaBQ1l+AStlGTg0Q==;BlobEndpoint=https://ibasbikeproduction3332.blob.core.windows.net/;FileEndpoint=https://ibasbikeproduction3332.file.core.windows.net/;QueueEndpoint=https://ibasbikeproduction3332.queue.core.windows.net/;TableEndpoint=https://ibasbikeproduction3332.table.core.windows.net/";
 
-TableClient tableClient = new TableClient(connectionString, tablename);
+    var tablename = "IBASKantineMenu";
+    var connectionString = "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=ibasbikeproduction3332;AccountKey=XYBeGNMoIwdKUkc844pZQupacwgVPA1Xn+5NOwUzmMaSi0agwzSFFyp1eEb9C36X4Tq8T9XaBQ1l+AStlGTg0Q==;BlobEndpoint=https://ibasbikeproduction3332.blob.core.windows.net/;FileEndpoint=https://ibasbikeproduction3332.file.core.windows.net/;QueueEndpoint=https://ibasbikeproduction3332.queue.core.windows.net/;TableEndpoint=https://ibasbikeproduction3332.table.core.windows.net/";
 
+    TableClient tableClient = new TableClient(connectionString, tablename);
 
+    Pageable<TableEntity> items = tableClient.Query<TableEntity>();
 
-
-Pageable<TableEntity>
-	items = tableClient.Query<TableEntity>
-		();
-
-		var _productionRepo = new List<Menu>
-			();
-			foreach (TableEntity item in items)
-			{
-			var dto = new Menu
-			{
-			Ugedag = item.RowKey,
-			Uge = item.PartitionKey,
-			Varm_Ret = item.GetString("Varm_Ret"),
-			Kold_Ret = item.GetString("Kold_Ret")
-			};
-			_productionRepo.Add(dto);
-			}
-
-			foreach (Menu item in _productionRepo)
-			{
-			Console.WriteLine($"{item.Uge} {item.Ugedag} {item.Varm_Ret} {item.Kold_Ret}");
-			}
-
-	<h1 class="display-4">Menu</h1>
-	<h1 class="display-5">Uge 45</h1>
-		foreach(var item in _productionRepo)
-	{
-		<div>
-		<h2>Ugedag: @item.Ugedag</h2>
-		<h2>Varm Ret: @item.Varm_Ret</h2>
-		<h2>Kold Ret: @item.Kold_Ret</h2>
-		</div>
-	}
+    var _productionRepo = new List<Menu>();
+    foreach (TableEntity item in items)
+    {
+        var dto = new Menu
+        {
+            Ugedag = item.RowKey,
+            Uge = item.PartitionKey,
+            Varm_Ret = item.GetString("Varm_Ret"),
+            Kold_Ret = item.GetString("Kold_Ret")
+        };
+        _productionRepo.Add(dto);
+    }
 }
+
+<div class="container">
+    <h1 class="display-4">Menu</h1>
+    <h1 class="display-5">Uge 45</h1>
+    @foreach (var item in _productionRepo)
+    {
+        <div class="menu-item">
+            <h2>@item.Ugedag</h2>
+            <div class="details">
+                <p><span>Varm Ret:</span> @item.Varm_Ret</p>
+                <p><span>Kold Ret:</span> @item.Kold_Ret</p>
+            </div>
+        </div>
+    }
+</div>
